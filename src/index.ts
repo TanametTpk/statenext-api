@@ -1,5 +1,10 @@
 import SystemManagement, { AddingState } from './core/SystemManagement'
 import SystemBuilder, { System } from './configs/express'
+import responseAsHtml from './configs/middlewares/responseAsHtml'
+
+export const middlewares =  {
+    responseAsHtml
+}
 
 export default class ServerBuilder {
 

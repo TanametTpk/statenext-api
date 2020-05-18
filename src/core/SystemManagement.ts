@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 export type Method = "get" | "post" | "put" | "delete" | "use"
 
 export interface Router {
@@ -17,24 +19,35 @@ export interface Route {
 }
 
 export type Routable = Router | Route
+export type Responable = (req: Request) => any
+export type ServiceMapping = { [name:string]: { [method:string]: Responable } }
 export type CallbackMapping = { [name:string]: Function }
 
 export interface State {
-    routes: {
-        [name:string]: Routable
-    },
-    services: CallbackMapping
+    routes: Router
+    services: ServiceMapping
     errors: CallbackMapping
 }
 
 export interface AddingState {
 
-    routes?: {
-        [name:string]: Routable
-    },
-    services?: CallbackMapping
+    routes?: Router
+    services?: ServiceMapping
     errors?: CallbackMapping
 
+}
+
+export const instanceofRoute = (object: Routable): object is Route => {
+
+    let checks: string[] = ['path','method', 'middlewares', 'controller', 'action']
+
+    for (let i = 0; i < checks.length ; i++){
+
+        if ( !(checks[i] in object) ) return false
+
+    }
+
+    return true
 }
 
 export default class SystemManagement {
