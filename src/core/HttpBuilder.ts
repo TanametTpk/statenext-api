@@ -33,6 +33,9 @@ export default class HttpBuilder {
             let method: Responable = this.findService(route)
             let service:ExpressFunction = this.createController(method)
 
+            // add middlewares
+            _.map<Function>(route.middlewares, (middleware: ExpressFunction) => router.use(`/${route.path}`, middleware))
+
             // set to router
             router[route.method](`/${route.path}`, service)
 
