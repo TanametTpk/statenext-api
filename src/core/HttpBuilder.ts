@@ -1,5 +1,8 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { State, RoutableMapping } from './SystemManagement'
+import { State, Routable, instanceofRoute, Route, Responable } from './SystemManagement'
+import _ from 'lodash'
+
+export type ExpressFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>
 
 export default class HttpBuilder {
 
@@ -9,22 +12,55 @@ export default class HttpBuilder {
         this.state = state
     }
 
-    private createRouter = (routes: RoutableMapping):Router => {
+    private findService = (route: Route): Responable => {
+
+        const { services } = this.state
+        return services[route.controller][route.action]
+
+    }
+
+    private createRouter = (routable: Routable):Router => {
 
         const router = Router()
 
-        // object to array
-
         // if object is route then create controller
         // else recursive createRouter
+        if (instanceofRoute(routable)) {
 
-        // set to router
+            let route: Route = routable
+            
+            // find service
+            let method: Responable = this.findService(route)
+            let service:ExpressFunction = this.createController(method)
+
+            // set to router
+            router[route.method](`/${route.path}`, service)
+
+        } else{
+
+            let routeNames: string[] = Object.keys(routable)
+
+            _.map<string>(routeNames, (name: string) => {
+
+                let r: Routable = routable[name]
+                let subRouter: Router = this.createRouter(r)
+                
+                // create as root path, if it's is index
+                if (name === "index") {
+                    name = ""
+                }
+
+                router.use(`/${name}`, subRouter)
+
+            })
+
+        }
 
         return router
 
     }
 
-    private createController = (method: (req:Request) => any) => {
+    private createController = (method: Responable): ExpressFunction => {
 
         const response = (req: Request, res: Response, data: any) => {
 
@@ -55,9 +91,8 @@ export default class HttpBuilder {
 
     public build = ():Router => {
 
-        // do something
-
-        return Router()
+        let root: Routable = this.state.routes
+        return this.createRouter(root)
 
     }
 

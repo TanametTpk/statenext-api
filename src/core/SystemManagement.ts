@@ -1,3 +1,5 @@
+import { Request } from 'express'
+
 export type Method = "get" | "post" | "put" | "delete" | "use"
 
 export interface Router {
@@ -17,19 +19,20 @@ export interface Route {
 }
 
 export type Routable = Router | Route
+export type Responable = (req: Request) => any
+export type ServiceMapping = { [name:string]: { [method:string]: Responable } }
 export type CallbackMapping = { [name:string]: Function }
-export type RoutableMapping = { [name:string]: Routable }
 
 export interface State {
-    routes: RoutableMapping
-    services: CallbackMapping
+    routes: Router
+    services: ServiceMapping
     errors: CallbackMapping
 }
 
 export interface AddingState {
 
-    routes?: RoutableMapping
-    services?: CallbackMapping
+    routes?: Router
+    services?: ServiceMapping
     errors?: CallbackMapping
 
 }

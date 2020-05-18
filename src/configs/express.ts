@@ -2,6 +2,7 @@ import express, { Application } from "express"
 import http, {Server} from 'http'
 import SystemManagement, { State } from "../core/SystemManagement"
 import HttpBuilder from '../core/HttpBuilder'
+import customResponse from './middlewares/customResponse'
 import _ from 'lodash'
 
 export interface System {
@@ -36,6 +37,7 @@ export default class SystemBuilder {
         // add global middlewares
         this.app.use(express.json())
         this.app.use(express.urlencoded({extended: true}))
+        this.app.use(customResponse)
 
     }
 
