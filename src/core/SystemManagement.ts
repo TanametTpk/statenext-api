@@ -18,23 +18,33 @@ export interface Route {
 
 export type Routable = Router | Route
 export type CallbackMapping = { [name:string]: Function }
+export type RoutableMapping = { [name:string]: Routable }
 
 export interface State {
-    routes: {
-        [name:string]: Routable
-    },
+    routes: RoutableMapping
     services: CallbackMapping
     errors: CallbackMapping
 }
 
 export interface AddingState {
 
-    routes?: {
-        [name:string]: Routable
-    },
+    routes?: RoutableMapping
     services?: CallbackMapping
     errors?: CallbackMapping
 
+}
+
+export const instanceofRoute = (object: Routable): object is Route => {
+
+    let checks: string[] = ['path','method', 'middlewares', 'controller', 'action']
+
+    for (let i = 0; i < checks.length ; i++){
+
+        if ( !(checks[i] in object) ) return false
+
+    }
+
+    return true
 }
 
 export default class SystemManagement {
