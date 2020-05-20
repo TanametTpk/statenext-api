@@ -7,12 +7,14 @@ export interface Router {
     [name:string]: Routable
 }
 
+export interface SocketBoardcast {
+    type: SocketBoardcastType
+    event_name: string
+}
+
 export interface SocketConfig {
     event_name: string,
-    boardcast:{
-        type: SocketBoardcastType
-        event_name: string
-    }
+    boardcast?: SocketBoardcast
 }
 
 export interface Route {
