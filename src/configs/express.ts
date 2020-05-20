@@ -1,12 +1,15 @@
 import express, { Application } from "express"
+import { Server as SocketServer } from 'socket.io'
 import http, {Server} from 'http'
 import SystemManagement, { State } from "../core/SystemManagement"
 import HttpBuilder from '../core/HttpBuilder'
+import SocketBuilder from '../core/SocketBuilder'
 import customResponse from './middlewares/customResponse'
 import _ from 'lodash'
 
 export interface System {
     app: Application,
+    socket?: SocketServer
     server: Server
 }
 
@@ -15,6 +18,7 @@ export default class SystemBuilder {
     private app!: Application
     private server!: Server
     private system!: SystemManagement
+    private socket?: SocketServer
 
     constructor(system: SystemManagement) {
 
@@ -49,6 +53,9 @@ export default class SystemBuilder {
         let httpBuilder = new HttpBuilder(state)
         this.app.use(httpBuilder.build())
 
+        let socketBuilder: SocketBuilder = new SocketBuilder(this.server, state)
+        this.socket = socketBuilder.build()
+
     }
 
     public configuration = (): System => {
@@ -61,7 +68,8 @@ export default class SystemBuilder {
     
         return {
             app: this.app,
-            server: this.server
+            server: this.server,
+            socket: this.socket,
         }
     
     }

@@ -1,20 +1,17 @@
-import { State, Route, Responable, SocketConfig, SocketBoardcastType, Routable } from "./SystemManagement"
+import { State, Route, Responable, SocketConfig, SocketBoardcastType, Routable, instanceofRoute, SocketBoardcastPayload } from "./SystemManagement"
 import socketIO, { Server as SocketServer, Socket } from 'socket.io'
 import {Server as HttpServer} from 'http'
 import _ from "lodash"
 
-export interface SocketBoardcastPayload {
-    event_name: string,
-    receivers: string[],
-    type: SocketBoardcastType,
-    data: any
-}
-
 export default class SocketBuilder {
 
     private state!: State
+    private server!: HttpServer
+    private io!: SocketServer
 
-    constructor(state: State) {
+    constructor(server: HttpServer, state: State) {
+        this.server = server
+        this.io = socketIO(this.server)
         this.state = state
     }
 
@@ -60,6 +57,8 @@ export default class SocketBuilder {
                 // response
                 let response = await method(socket)
                 callback(response)
+
+                if (!socket._receivers) socket._receivers = []
 
                 // boardcast
                 this.boardcast(socket, config, response , socket._receivers)
@@ -123,50 +122,63 @@ export default class SocketBuilder {
 
     }
 
-    private createMainController = (routeConfig:Routable, socket:Socket) => {
+    private createRoute = (routable: Routable, socket:Socket):void => {
 
-        const routes = Object.values(routeConfig)
-        routes.map((route:Route) => {
+        // if object is route then create controller
+        // else recursive createRouter
+        if (instanceofRoute(routable)) {
 
-            const service = this.findService(route)
+            let route: Route = routable
+            
+            // find service
+            let method: Responable = this.findService(route)
+            this.createMainController(route, socket, method)
 
-            // if have socket
-            if (route.socket) {
 
-                this.createController(
-                    socket,
-                    route.socket,
-                    service,
-                )
+        } else{
 
-            }
+            let routeNames: string[] = Object.keys(routable)
 
-        })
+            _.map<string>(routeNames, (name: string) => {
+
+                let r: Routable = routable[name]
+                this.createRoute(r, socket)
+
+            })
+
+        }
+
+    }
+
+    private createMainController = (route:Route, socket:Socket, service:Responable) => {
+
+        // if have socket
+        if (route.socket) {
+
+            this.createController(
+                socket,
+                route.socket,
+                service,
+            )
+
+        }
 
     }
 
     private setupController = (socket:Socket) => {
 
         const routesConfig = this.state.routes
-        const routesKey = Object.keys(routesConfig)
-        routesKey.map((controllerName: string) => {
-            
-            let routeConf:Routable = routesConfig[controllerName]
-            this.createMainController(routeConf, socket)
-
-        })
+        this.createRoute(routesConfig, socket)
 
     }
 
-    public build = (server: HttpServer) => {
-
-        const io:SocketServer = socketIO(server)
+    public build = (): SocketServer => {
 
         // connected
-        io.on('connection' , (socket:Socket) => {
-            
+        this.io.on('connection' , (socket:Socket) => {
+
             // setup middlewares
-            this.setupMiddlewares(io, socket)
+            this.setupMiddlewares(this.io, socket)
 
             // setup controller
             this.setupDefaultController(socket)
@@ -178,7 +190,7 @@ export default class SocketBuilder {
 
         })
 
-        return io
+        return this.io
 
     }
 

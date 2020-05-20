@@ -2,9 +2,9 @@
 declare namespace SocketIO {
 
     interface Socket {
-        body: any
-        _receivers: string[]
-        _boardcasts: SocketBoardcastPayload[]
+        body?: any
+        _receivers?: string[]
+        _boardcasts?: SocketBoardcastPayload[]
     }
 
     interface SocketBoardcastPayload {

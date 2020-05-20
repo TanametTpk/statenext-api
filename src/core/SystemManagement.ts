@@ -48,6 +48,21 @@ export interface AddingState {
 
 }
 
+export interface SocketBoardcastPayload {
+    event_name: string,
+    receivers: string[],
+    type: SocketBoardcastType,
+    data: any
+}
+
+interface SocketBoardcastExtend {
+    body?: any
+    _receivers?: string[]
+    _boardcasts?: SocketBoardcastPayload[]
+}
+
+export type SNRequest =  SocketBoardcastExtend & Request
+
 export const instanceofRoute = (object: Routable): object is Route => {
 
     let checks: string[] = ['path','method', 'middlewares', 'controller', 'action']
