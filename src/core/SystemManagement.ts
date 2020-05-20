@@ -1,20 +1,29 @@
 import { Request } from 'express'
 
 export type Method = "get" | "post" | "put" | "delete" | "use"
+export type SocketBoardcastType = "personal" | "boardcast"
 
 export interface Router {
-    [name:string]: Routable,
+    [name:string]: Routable
+}
+
+export interface SocketConfig {
+    event_name: string,
+    boardcast:{
+        type: SocketBoardcastType
+        event_name: string
+    }
 }
 
 export interface Route {
 
-    path: string,
-    method: Method,
-    middlewares: Function[],
-    controller: string,
-    action: string,
-    priority?: number,
-    routerId?: string,
+    path: string
+    method: Method
+    middlewares: Function[]
+    controller: string
+    action: string
+    priority?: number
+    socket?: SocketConfig
 
 }
 
