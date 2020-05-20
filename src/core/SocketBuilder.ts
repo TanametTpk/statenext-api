@@ -25,12 +25,12 @@ export default class SocketBuilder {
     private boardcast = (socket:Socket, conf: SocketConfig, data: any, receivers: string[]) => {
 
         const { event_name, boardcast } = conf
-        let type = ""
+        let type: SocketBoardcastType | undefined
 
         if (boardcast) type = boardcast.type
 
         if (type === "boardcast"){
-            socket.broadcast.emit(event_name, data);
+            socket.broadcast.emit(event_name, data)
         }
 
         if (type === "personal"){
