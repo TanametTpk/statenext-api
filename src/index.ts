@@ -1,6 +1,7 @@
 import SystemManagement, { AddingState, SNRequest, SocketBoardcastPayload } from './core/SystemManagement'
 import SystemBuilder, { System } from './configs/express'
 import responseAsHtml from './configs/middlewares/responseAsHtml'
+import requireAll from './helper/require-all'
 
 export const middlewares =  {
     responseAsHtml
@@ -29,6 +30,15 @@ export default class ServerBuilder {
     public use(state: AddingState){
 
         this.addState(state)
+
+    }
+
+    public usePath(routePath: string, servicePath: string){
+
+        let routes = requireAll(routePath)
+        let services = requireAll(servicePath)
+
+        this.use({routes, services})
 
     }
 
