@@ -1,15 +1,23 @@
 {
   "name": "statenext-api",
-  "version": "1.0.0",
-  "description": "",
+  "version": "1.0.1",
+  "description": "statenext is web server builder.",
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -p ."
   },
   "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TanametTpk/statenext-api.git"
+  },
+  "author": "tanamettpk",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TanametTpkstatenext-api/issues"
+  },
+  "homepage": "https://github.com/TanametTpk/statenext-api#readme",
   "devDependencies": {
     "typescript": "^3.9.2"
   },
