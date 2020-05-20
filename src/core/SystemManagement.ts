@@ -1,20 +1,31 @@
 import { Request } from 'express'
 
 export type Method = "get" | "post" | "put" | "delete" | "use"
+export type SocketBoardcastType = "personal" | "boardcast"
 
 export interface Router {
-    [name:string]: Routable,
+    [name:string]: Routable
+}
+
+export interface SocketBoardcast {
+    type: SocketBoardcastType
+    event_name: string
+}
+
+export interface SocketConfig {
+    event_name: string,
+    boardcast?: SocketBoardcast
 }
 
 export interface Route {
 
-    path: string,
-    method: Method,
-    middlewares: Function[],
-    controller: string,
-    action: string,
-    priority?: number,
-    routerId?: string,
+    path: string
+    method: Method
+    middlewares: Function[]
+    controller: string
+    action: string
+    priority?: number
+    socket?: SocketConfig
 
 }
 
@@ -36,6 +47,21 @@ export interface AddingState {
     errors?: CallbackMapping
 
 }
+
+export interface SocketBoardcastPayload {
+    event_name: string,
+    receivers: string[],
+    type: SocketBoardcastType,
+    data: any
+}
+
+interface SocketBoardcastExtend {
+    body?: any
+    _receivers?: string[]
+    _boardcasts?: SocketBoardcastPayload[]
+}
+
+export type SNRequest =  SocketBoardcastExtend & Request
 
 export const instanceofRoute = (object: Routable): object is Route => {
 
