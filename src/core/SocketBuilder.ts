@@ -1,4 +1,4 @@
-import { State, Route, Responable, SocketConfig, SocketBoardcastType, Routable, instanceofRoute, SocketBoardcastPayload } from "./SystemManagement"
+import { State, Route, Responable, SocketConfig, SocketBoardcastType, Routable, instanceofRoute, SocketBoardcastPayload, instanceofRouteList, RouteList } from "./SystemManagement"
 import socketIO, { Server as SocketServer, Socket } from 'socket.io'
 import {Server as HttpServer} from 'http'
 import _ from "lodash"
@@ -130,13 +130,20 @@ export default class SocketBuilder {
 
         // if object is route then create controller
         // else recursive createRouter
-        if (instanceofRoute(routable)) {
+        if (instanceofRoute(routable) || instanceofRouteList(routable)) {
 
-            let route: Route = routable
+            let routables:RouteList = []
+            if (instanceofRoute(routable)) routables = [routable]
+            if (instanceofRouteList(routable))
+
+
+            for (let i = 0; i < routables.length; i++) {
+                let route: Route = routables[i]
             
-            // find service
-            let method: Responable = this.findService(route)
-            this.createMainController(route, socket, method)
+                // find service
+                let method: Responable = this.findService(route)
+                this.createMainController(route, socket, method)
+            }
 
 
         } else{
