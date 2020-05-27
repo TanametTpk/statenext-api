@@ -29,15 +29,22 @@ export interface Route {
 
 }
 
-export type Routable = Router | Route
+export type RouteList = Route[]
+
+export type Routable = Router | Route | RouteList
 export type Responable = (req: Request) => any
 export type ServiceMapping = { [name:string]: { [method:string]: Responable } }
 export type CallbackMapping = { [name:string]: Function }
+
+export interface SystemConfig {
+    allow_origins: string[]
+}
 
 export interface State {
     routes: Router
     services: ServiceMapping
     errors: CallbackMapping
+    configs: SystemConfig
 }
 
 export interface AddingState {
@@ -45,6 +52,7 @@ export interface AddingState {
     routes?: Router
     services?: ServiceMapping
     errors?: CallbackMapping
+    configs?: SystemConfig
 
 }
 
@@ -63,7 +71,16 @@ interface SocketBoardcastExtend {
 
 export type SNRequest =  SocketBoardcastExtend & Request
 
+export const instanceofRouteList = (object: Routable): object is RouteList => {
+
+    if (object instanceof Array) return true
+    return false
+
+}
+
 export const instanceofRoute = (object: Routable): object is Route => {
+
+    if (object instanceof Array) return false
 
     let checks: string[] = ['path','method', 'middlewares', 'controller', 'action']
 
@@ -85,7 +102,10 @@ export default class SystemManagement {
         this.state = {
             routes: {},
             services: {},
-            errors: {}
+            errors: {},
+            configs: {
+                allow_origins: []
+            },
         }
 
         if (state) this.addState(state)

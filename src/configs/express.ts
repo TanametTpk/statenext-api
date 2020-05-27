@@ -5,6 +5,7 @@ import SystemManagement, { State } from "../core/SystemManagement"
 import HttpBuilder from '../core/HttpBuilder'
 import SocketBuilder from '../core/SocketBuilder'
 import customResponse from './middlewares/customResponse'
+import cors from './middlewares/_cors'
 import _ from 'lodash'
 
 export interface System {
@@ -38,9 +39,12 @@ export default class SystemBuilder {
 
     public addGlobalMiddlewares = () => {
 
+        const { configs: {allow_origins} } = this.system.getState()
+
         // add global middlewares
         this.app.use(express.json())
         this.app.use(express.urlencoded({extended: true}))
+        this.app.use(cors(allow_origins))
         this.app.use(customResponse)
 
     }

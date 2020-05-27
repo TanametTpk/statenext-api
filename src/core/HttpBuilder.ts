@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import { State, Routable, instanceofRoute, Route, Responable, SocketConfig } from './SystemManagement'
+import { State, Routable, instanceofRoute, Route, Responable, SocketConfig, instanceofRouteList, RouteList } from './SystemManagement'
 import { Server as SocketServer } from 'socket.io'
 import _ from 'lodash'
 
@@ -86,23 +86,30 @@ export default class HttpBuilder {
 
         // if object is route then create controller
         // else recursive createRouter
-        if (instanceofRoute(routable)) {
+        if (instanceofRoute(routable) || instanceofRouteList(routable)) {
 
-            let route: Route = routable
+            let routables:RouteList = []
+            if (instanceofRoute(routable)) routables = [routable]
+            if (instanceofRouteList(routable)) routables = routable
+
+
+            for (let i = 0; i < routables.length; i++) {
+                let route: Route = routables[i]
             
-            // find service
-            let method: Responable = this.findService(route)
-            let postMethods: PostMethod[] = []
+                // find service
+                let method: Responable = this.findService(route)
+                let postMethods: PostMethod[] = []
 
-            postMethods.push(this.createBoardcastFunction(route))
+                postMethods.push(this.createBoardcastFunction(route))
 
-            let service:ExpressFunction = this.createController(method, postMethods)
+                let service:ExpressFunction = this.createController(method, postMethods)
 
-            // add middlewares
-            _.map<Function>(route.middlewares, (middleware: ExpressFunction) => router.use(`/${route.path}`, middleware))
+                // add middlewares
+                _.map<Function>(route.middlewares, (middleware: ExpressFunction) => router.use(`/${route.path}`, middleware))
 
-            // set to router
-            router[route.method](`/${route.path}`, service)
+                // set to router
+                router[route.method](`/${route.path}`, service)
+            }
 
         } else{
 
