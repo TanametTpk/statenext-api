@@ -134,7 +134,7 @@ export default class SocketBuilder {
 
             let routables:RouteList = []
             if (instanceofRoute(routable)) routables = [routable]
-            if (instanceofRouteList(routable))
+            if (instanceofRouteList(routable)) routables = routable
 
 
             for (let i = 0; i < routables.length; i++) {

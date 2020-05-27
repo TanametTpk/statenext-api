@@ -10,7 +10,7 @@ describe('Running Http Server', () => {
     beforeAll(() => {
 
         let routes: Router = {
-            index: [
+            tests: [
                 {
                     path: "/",
                     method: "get",
@@ -79,7 +79,7 @@ describe('Running Http Server', () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then( res => {
-                expect(res.body.length).to.equal("get")
+                expect(res.body.msg).to.equal("get")
                 done()
             })
             .catch((err) => {
