@@ -24,7 +24,11 @@ export default class SocketBuilder {
 
     private boardcast = (socket:Socket, conf: SocketConfig, data: any, receivers: string[]) => {
 
-        const { event_name, boardcast } = conf
+        const { boardcast } = conf
+
+        if (!boardcast?.event_name) return
+        const event_name: string = boardcast?.event_name
+
         let type: SocketBoardcastType | undefined
 
         if (boardcast) type = boardcast.type
@@ -56,7 +60,7 @@ export default class SocketBuilder {
 
                 // response
                 let response = await method(socket)
-                callback(response)
+                if (callback) callback(response)
 
                 if (!socket._receivers) socket._receivers = []
 
@@ -78,7 +82,7 @@ export default class SocketBuilder {
 
 
             } catch (err) {
-                callback({error:err.message})
+                if (callback) callback({error:err.message})
             }
 
         });
