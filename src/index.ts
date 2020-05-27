@@ -1,4 +1,4 @@
-import SystemManagement, { AddingState, SNRequest, SocketBoardcastPayload } from './core/SystemManagement'
+import SystemManagement, { AddingState, SNRequest, SocketBoardcastPayload, Router } from './core/SystemManagement'
 import SystemBuilder, { System } from './configs/express'
 import responseAsHtml from './configs/middlewares/responseAsHtml'
 import requireAll from './helper/require-all'
@@ -7,7 +7,7 @@ export const middlewares =  {
     responseAsHtml
 }
 
-export { SNRequest, SocketBoardcastPayload }
+export { SNRequest, SocketBoardcastPayload, Router }
 
 export default class ServerBuilder {
 
