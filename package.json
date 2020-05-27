@@ -1,6 +1,6 @@
 {
   "name": "statenext-api",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "statenext is web server builder.",
   "main": "lib/index.js",
   "scripts": {
