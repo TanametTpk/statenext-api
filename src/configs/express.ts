@@ -49,10 +49,11 @@ export default class SystemBuilder {
 
         const state:State = this.system.getState()
 
-        // add logic here
+        // create http transportaion
         let httpBuilder = new HttpBuilder(state)
         this.app.use(httpBuilder.build())
 
+        // create socket transportaion
         let socketBuilder: SocketBuilder = new SocketBuilder(this.server, state)
         this.socket = socketBuilder.build()
 
