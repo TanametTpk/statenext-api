@@ -1,34 +1,34 @@
 import { expect } from 'chai'
 import supertest, { SuperTest, Test } from 'supertest'
-import ServerBuilder, { Router, SNRequest } from '../index'
+import ServerBuilder, { Router, SNRequest, middlewares } from '../index'
 import { Server } from 'http'
 
-describe('Running server', () => {
+describe('Including middlewares', () => {
 
     let request: SuperTest<Test>
 
     beforeAll(() => {
 
-        let routes: Router = {
+        let routes:Router = {
             tests:{
                 path: "/",
                 method: "get",
-                middlewares: [],
+                middlewares: [middlewares.responseAsHtml],
                 controller: "tests",
-                action: "get"
+                action: "getHtml"
             }
         }
         
         let services = {
             tests:{
-                get: async (req: SNRequest) => {
-        
-                    return ["hello world"];
-                    
+                getHtml: async (req:SNRequest) => {
+
+                    return "<p>hello world</p>"
+
                 }
             }
         }
-
+        
         let builder = new ServerBuilder()
 
         let server: Server = builder.setup({
@@ -40,16 +40,16 @@ describe('Running server', () => {
 
     })
 
-    describe('working', () => {
+    describe('send html', () => {
 
-        it('can normally request', (done) => {
+        it('can reponse as html', (done) => {
             
             request
             .get('/tests')
-            .expect('Content-Type', /json/)
+            .expect('Content-Type', /html/)
             .expect(200)
             .then( res => {
-                expect(res.body.length).to.equal(1)
+                expect(res.text).to.equal("<p>hello world</p>")
                 done()
             })
             .catch((err) => {
