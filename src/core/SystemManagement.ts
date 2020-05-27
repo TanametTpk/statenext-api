@@ -29,7 +29,9 @@ export interface Route {
 
 }
 
-export type Routable = Router | Route
+export type RouteList = Route[]
+
+export type Routable = Router | Route | RouteList
 export type Responable = (req: Request) => any
 export type ServiceMapping = { [name:string]: { [method:string]: Responable } }
 export type CallbackMapping = { [name:string]: Function }
@@ -69,7 +71,16 @@ interface SocketBoardcastExtend {
 
 export type SNRequest =  SocketBoardcastExtend & Request
 
+export const instanceofRouteList = (object: Routable): object is RouteList => {
+
+    if (object instanceof Array) return true
+    return false
+
+}
+
 export const instanceofRoute = (object: Routable): object is Route => {
+
+    if (object instanceof Array) return false
 
     let checks: string[] = ['path','method', 'middlewares', 'controller', 'action']
 
