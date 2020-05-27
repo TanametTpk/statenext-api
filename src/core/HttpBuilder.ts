@@ -92,6 +92,14 @@ export default class HttpBuilder {
             if (instanceofRoute(routable)) routables = [routable]
             if (instanceofRouteList(routable)) routables = routable
 
+            routables.sort((a:Route,b:Route) => {
+
+                let aPriority = a.priority || Number.MAX_SAFE_INTEGER
+                let bPriority = b.priority || Number.MAX_SAFE_INTEGER
+
+                return aPriority - bPriority
+
+            })
 
             for (let i = 0; i < routables.length; i++) {
                 let route: Route = routables[i]
