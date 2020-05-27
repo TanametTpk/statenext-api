@@ -34,10 +34,15 @@ export type Responable = (req: Request) => any
 export type ServiceMapping = { [name:string]: { [method:string]: Responable } }
 export type CallbackMapping = { [name:string]: Function }
 
+export interface SystemConfig {
+    allow_origins: string[]
+}
+
 export interface State {
     routes: Router
     services: ServiceMapping
     errors: CallbackMapping
+    configs: SystemConfig
 }
 
 export interface AddingState {
@@ -45,6 +50,7 @@ export interface AddingState {
     routes?: Router
     services?: ServiceMapping
     errors?: CallbackMapping
+    configs?: SystemConfig
 
 }
 
@@ -85,7 +91,10 @@ export default class SystemManagement {
         this.state = {
             routes: {},
             services: {},
-            errors: {}
+            errors: {},
+            configs: {
+                allow_origins: []
+            },
         }
 
         if (state) this.addState(state)
