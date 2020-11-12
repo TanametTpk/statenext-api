@@ -18,7 +18,7 @@ statenext-api สร้างต่อยอดจาก Express, เราพ�
 then import
 
 ```
-import ServerBuilder, {SNRequest} from 'statenext-api'
+import Server, {SNRequest} from 'statenext-api'
 import { Router, SocketBoardcastPayload } from 'statenext-api/lib/core/SystemManagement';
 
 let routes:Router = {
@@ -56,7 +56,7 @@ let services = {
 
 }
 
-let server = new ServerBuilder()
+let server = new Server()
 
 server.setup({
     // services,
@@ -113,9 +113,9 @@ export default async (req:SNRequest) => {
 
 ### server example
 ```
-import ServerBuilder from 'statenext-api'
+import Server from 'statenext-api'
 
-let server = new ServerBuilder()
+let server = new Server()
 
 server.usePath(__dirname + '/routes', __dirname + '/services')
 
