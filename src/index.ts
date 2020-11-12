@@ -9,7 +9,7 @@ export const middlewares =  {
 
 export { SNRequest, SocketBoardcastPayload, Router }
 
-export default class ServerBuilder {
+export default class Server {
 
     private systemManagement!: SystemManagement
     private systemBuilder!: SystemBuilder
