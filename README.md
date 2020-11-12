@@ -18,8 +18,7 @@ statenext-api สร้างต่อยอดจาก Express, เราพ�
 then import
 
 ```
-import Server, {SNRequest} from 'statenext-api'
-import { Router, SocketBoardcastPayload } from 'statenext-api/lib/core/SystemManagement';
+import Server, {SNRequest, Router, SocketBoardcastPayload} from 'statenext-api'
 
 let routes:Router = {
     index: {
